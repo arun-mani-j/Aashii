@@ -150,7 +150,7 @@ def static_command(update: Update, _: CallbackContext):
 def unblock_user_cl(update: Update, context: CallbackContext):
 
     """
-    Blocks the user from contacting the admins.
+    Unblocks the user from contacting the admins.
     """
 
     database = context.bot_data["database"]
