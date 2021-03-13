@@ -13,7 +13,7 @@ class Literal:
 
     ADMINS_GROUP_ID = os.getenv("ADMINS_GROUP_ID")
 
-    ANNOUNCEMENT_INTERVAL = float(os.getenv("ANNOUNCEMENT_INTERVAL", "2"))
+    ANNOUNCEMENT_INTERVAL = float(os.getenv("ANNOUNCEMENT_INTERVAL", "0.5"))
 
     CHAT_GROUP_ID = os.getenv("CHAT_GROUP_ID")
 
