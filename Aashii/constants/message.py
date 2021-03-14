@@ -59,7 +59,7 @@ class Message:
         "in managing communication between members and admins.\n\n"
         "Since you are in <b>admins group</b>, the following commands are your exclusive.\n\n"
         " ⁃ /block - Blocks a user from contacting you.\n"
-        " ⁃ /cancel - Cancels a progressing announcement.\n"
+        " ⁃ /cancel - Cancels an announcement in progress.\n"
         " ⁃ /unblock - Unblocks a blocked user.\n\n"
         "All the above commands should be a reply to a message.\n"
         "For <code>block</code> and <code>unblock</code>, "
