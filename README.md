@@ -4,7 +4,7 @@
 # Commands
 - /announce - Sends the message to all subscribers of bot.
 - /block - Blocks the user from contacting the admins.
-- /cancel - Cancels the progressing announcement.
+- /cancel - Cancels the announcement in progress.
 - /help - Sends the help message.
 - /start - Starts the bot.
 - /unblock - Unblocks the user.
