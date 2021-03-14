@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardMarkup, ParseMode, Update
 from telegram.ext import CallbackContext
 from Aashii.constants import Button, Message
 
@@ -21,6 +21,9 @@ def block_user_cb(update: Update, context: CallbackContext):
     message.edit_reply_markup(markup)
     message = message.reply_html(text)
     database.add_message(message.message_id, user_id)
+    context.bot.send_message(
+        chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+    )
 
 
 def connect_admin_cb(update: Update, context: CallbackContext):
@@ -41,10 +44,12 @@ def connect_admin_cb(update: Update, context: CallbackContext):
         USER_ID=user_id,
         USER_FULL_NAME=full_name,
     )
-
     update.callback_query.answer()
     message = message.reply_html(text)
     database.add_message(message.message_id, user_id)
+    context.bot.send_message(
+        chat_id=user_id, text=Message.ADMIN_CONNECTED_STATUS, parse_mode=ParseMode.HTML
+    )
 
 
 def unblock_user_cb(update: Update, context: CallbackContext):
@@ -65,3 +70,6 @@ def unblock_user_cb(update: Update, context: CallbackContext):
     message.edit_reply_markup(markup)
     message = message.reply_html(text)
     database.add_message(message.message_id, user_id)
+    context.bot.send_message(
+        chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+    )

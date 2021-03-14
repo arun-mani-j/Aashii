@@ -15,6 +15,8 @@ class Message:
         "<a href='tg://user?id={USER_ID}'>{USER_FULL_NAME}</a>"
     )
 
+    ADMIN_CONNECTED_STATUS = "An admin has connected with you."
+
     ANNOUNCEMENT_CANCELLED = (
         "Announcement cancelled in progress.\n"
         " • <b>Sent</b> : <code>{SENT}</code>\n"
