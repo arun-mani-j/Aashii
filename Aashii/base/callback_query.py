@@ -19,11 +19,11 @@ def block_user_cb(update: Update, context: CallbackContext):
     database.set_user_status(user_id, True)
     update.callback_query.answer()
     message.edit_reply_markup(markup)
-    message = message.reply_html(text)
-    database.add_message(message.message_id, user_id)
     context.bot.send_message(
         chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
     )
+    message = message.reply_html(text)
+    database.add_message(message.message_id, user_id)
 
 
 def connect_admin_cb(update: Update, context: CallbackContext):
@@ -45,11 +45,11 @@ def connect_admin_cb(update: Update, context: CallbackContext):
         USER_FULL_NAME=full_name,
     )
     update.callback_query.answer()
-    message = message.reply_html(text)
-    database.add_message(message.message_id, user_id)
     context.bot.send_message(
         chat_id=user_id, text=Message.ADMIN_CONNECTED_STATUS, parse_mode=ParseMode.HTML
     )
+    message = message.reply_html(text)
+    database.add_message(message.message_id, user_id)
 
 
 def unblock_user_cb(update: Update, context: CallbackContext):
@@ -68,8 +68,8 @@ def unblock_user_cb(update: Update, context: CallbackContext):
     database.set_user_status(user_id, False)
     update.callback_query.answer()
     message.edit_reply_markup(markup)
-    message = message.reply_html(text)
-    database.add_message(message.message_id, user_id)
     context.bot.send_message(
         chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
     )
+    message = message.reply_html(text)
+    database.add_message(message.message_id, user_id)

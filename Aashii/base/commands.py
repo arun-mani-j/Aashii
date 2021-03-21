@@ -52,7 +52,7 @@ def block_user_cl(update: Update, context: CallbackContext):
         chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
     )
     message = update.message.reply_html(text)
-    database.add_message(user_id, message.message_id)
+    database.add_message(message.message_id, user_id)
 
 
 @check_is_group_command
@@ -164,4 +164,4 @@ def unblock_user_cl(update: Update, context: CallbackContext):
         chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
     )
     message = update.message.reply_html(text)
-    database.add_message(user_id, message.message_id)
+    database.add_message(message.message_id, user_id)
