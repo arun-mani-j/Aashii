@@ -66,6 +66,8 @@ class Message:
         "All the above commands should be a reply to a message.\n"
         "For <code>block</code> and <code>unblock</code>, "
         "the replied message should be a forwarded message by me.\n\n"
+        "Otherwise, you can pass the user ID as an argument. "
+        "For example, <code>/block 2718281828</code> will block the user of given ID.\n\n"
         "My source code is available at https://github.com/j-arun-mani/Aashii\n"
         "Enjoy !"
     )
@@ -82,7 +84,7 @@ class Message:
 
     INVALID_COMMAND = "I don't understand what you are talking about ..."
 
-    INVALID_REPLY = "I expected this as a reply to my message."
+    INVALID_REPLY = "I expected this as a reply to a valid message."
 
     NO_ANNOUNCEMENT = "No announcement is in due to cancel."
 

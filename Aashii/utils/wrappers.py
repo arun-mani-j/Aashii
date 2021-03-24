@@ -19,24 +19,6 @@ def check_is_group_command(func):
     return wrapped
 
 
-def check_is_reply_verbose(func):
-
-    """
-    Checks if the message is a reply to any message
-    and warns on otherwise.
-    """
-
-    def wrapped(update: Update, context: CallbackContext):
-
-        reply = update.message.reply_to_message
-        if reply:
-            func(update, context)
-        else:
-            update.message.reply_html(Message.INVALID_REPLY)
-
-    return wrapped
-
-
 def check_is_reply_to_user_linked_silent(func):
 
     """

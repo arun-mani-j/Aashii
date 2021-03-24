@@ -1,10 +1,9 @@
 from telegram import InlineKeyboardMarkup, ParseMode, Update
 from telegram.ext import CallbackContext
 from Aashii.constants import Button, Literal, Message
-from Aashii.utils.misc import announce
+from Aashii.utils.misc import announce, block_user, unblock_user
 from Aashii.utils.wrappers import (
     check_is_group_command,
-    check_is_reply_to_user_linked_verbose,
     check_is_reply_verbose,
     check_user_status,
 )
@@ -34,23 +33,32 @@ def announce_users(update: Update, context: CallbackContext):
 
 
 @check_is_group_command
-@check_is_reply_to_user_linked_verbose
 def block_user_cl(update: Update, context: CallbackContext):
 
     """
-    Blocks the user from contacting the admins.
+    Blocks the user from contacting the admins based on command.
     """
 
     database = context.bot_data["database"]
-    message_id = update.message.reply_to_message.message_id
-    user_id = database.get_user_id(message_id)
+
+    if update.message.reply_to_message:
+        message_id = update.message.reply_to_message.message_id
+        user_id = database.get_user_id(message_id)
+
+        if not user_id:
+            update.message.reply_html(Message.INVALID_REPLY)
+            return
+
+    elif context.args and context.args[0].isdigit():
+        user_id = int(context.args[0])
+    else:
+        update.message.reply_html(Message.INVALID_REPLY)
+        return
+
+    block_user(user_id, context)
+
     full_name = database.get_user_full_name(user_id)
     text = Message.BLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
-
-    database.set_user_status(user_id, True)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
     message = update.message.reply_html(text)
     database.add_message(message.message_id, user_id)
 
@@ -112,8 +120,14 @@ def send_start(update: Update, context: CallbackContext):
     keyboard = InlineKeyboardMarkup.from_row(buttons)
     user = update.message.from_user
     full_name = user.full_name
-    mem = context.bot.get_chat_member(Literal.CHAT_GROUP_ID, user.id)
-    status = mem.status.title()
+
+    try:
+        mem = context.bot.get_chat_member(Literal.CHAT_GROUP_ID, user.id)
+    except Exception:
+        status = "Left"
+    else:
+        status = mem.status.title()
+
     user_id = user.id
     username = f"@{user.username}" if user.username else Message.NO_USERNAME
     text = Message.USER_CONNECTED.format(
@@ -146,22 +160,31 @@ def static_command(update: Update, _: CallbackContext):
 
 
 @check_is_group_command
-@check_is_reply_to_user_linked_verbose
 def unblock_user_cl(update: Update, context: CallbackContext):
 
     """
-    Unblocks the user from contacting the admins.
+    Unblocks the user from contacting the admins based on command.
     """
 
     database = context.bot_data["database"]
-    message_id = update.message.reply_to_message.message_id
-    user_id = database.get_user_id(message_id)
+
+    if update.message.reply_to_message:
+        message_id = update.message.reply_to_message.message_id
+        user_id = database.get_user_id(message_id)
+
+        if not user_id:
+            update.message.reply_html(Message.INVALID_REPLY)
+            return
+
+    elif context.args and context.args[0].isdigit():
+        user_id = int(context.args[0])
+    else:
+        update.message.reply_html(Message.INVALID_REPLY)
+        return
+
+    unblock_user(user_id, context)
+
     full_name = database.get_user_full_name(user_id)
     text = Message.UNBLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
-
-    database.set_user_status(user_id, False)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
     message = update.message.reply_html(text)
     database.add_message(message.message_id, user_id)

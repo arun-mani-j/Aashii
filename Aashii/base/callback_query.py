@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardMarkup, ParseMode, Update
 from telegram.ext import CallbackContext
 from Aashii.constants import Button, Message
+from Aashii.utils.misc import block_user, unblock_user
 
 
 def block_user_cb(update: Update, context: CallbackContext):
@@ -12,16 +13,12 @@ def block_user_cb(update: Update, context: CallbackContext):
     database = context.bot_data["database"]
     message = update.callback_query.message
     user_id = database.get_user_id(message.message_id)
+    block_user(user_id, context)
     full_name = database.get_user_full_name(user_id)
     text = Message.BLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
     markup = InlineKeyboardMarkup.from_row([Button.CONNECT, Button.UNBLOCK])
-
-    database.set_user_status(user_id, True)
     update.callback_query.answer()
     message.edit_reply_markup(markup)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
     message = message.reply_html(text)
     database.add_message(message.message_id, user_id)
 
@@ -61,15 +58,11 @@ def unblock_user_cb(update: Update, context: CallbackContext):
     database = context.bot_data["database"]
     message = update.callback_query.message
     user_id = database.get_user_id(message.message_id)
+    unblock_user(user_id, context)
     full_name = database.get_user_full_name(user_id)
     text = Message.UNBLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
     markup = InlineKeyboardMarkup.from_row([Button.BLOCK, Button.CONNECT])
-
-    database.set_user_status(user_id, False)
     update.callback_query.answer()
     message.edit_reply_markup(markup)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
     message = message.reply_html(text)
     database.add_message(message.message_id, user_id)

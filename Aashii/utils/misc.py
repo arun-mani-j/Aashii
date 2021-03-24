@@ -47,3 +47,29 @@ def announce(context: CallbackContext):
             )
     finally:
         log_message.edit_text(text, parse_mode=ParseMode.HTML)
+
+
+def block_user(user_id: int, context: CallbackContext):
+
+    """
+    Blocks the user from contacting admins and informs the user.
+    """
+
+    database = context.bot_data["database"]
+    database.set_user_status(user_id, True)
+    context.bot.send_message(
+        chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+    )
+
+
+def unblock_user(user_id: int, context: CallbackContext):
+
+    """
+    Unblocks the user from contacting admins and informs the user.
+    """
+
+    database = context.bot_data["database"]
+    database.set_user_status(user_id, False)
+    context.bot.send_message(
+        chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+    )
