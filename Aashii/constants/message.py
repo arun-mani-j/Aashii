@@ -110,7 +110,7 @@ class Message:
         "<a href='tg://user?id={USER_ID}'>{FULL_NAME}</a> has started the bot.\n"
         "Username : {USERNAME}\n"
         "User ID : <code>{USER_ID}</code>\n"
-        "Status : {STATUS}."
+        "Status : {STATUS}"
     )
 
     USER_NOT_FOUND = "I can't find the user in my database, something's wrong ..."
