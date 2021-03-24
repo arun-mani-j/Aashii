@@ -1,4 +1,5 @@
 import logging
+from os import getenv
 from telegram.ext import Updater
 from Aashii.utils.database import Database
 
@@ -13,15 +14,17 @@ class Server:
     def _setup_handlers(self, handlers: dict):
 
         dispatcher = self.updater.dispatcher
-        error_func = handlers.pop(
-            "ErrorHandler", lambda _, ctx: logging.error(ctx.error)
-        )
         for handler_type, handles in handlers.items():
             for handle in handles:
                 h_kwargs, d_args = handle[0], handle[1:]
                 handler = handler_type(**h_kwargs)
                 dispatcher.add_handler(handler, *d_args)
-        dispatcher.add_error_handler(error_func)
+
+        if getenv("AASHII_DEBUG") != "True":
+            error_func = handlers.pop(
+                "ErrorHandler", lambda _, ctx: logging.error(ctx.error)
+            )
+            dispatcher.add_error_handler(error_func)
 
     def listen(self, listen: str, port: int, url: str, url_path: str):
 
