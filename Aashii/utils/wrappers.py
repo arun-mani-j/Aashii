@@ -36,21 +36,20 @@ def check_is_reply_to_user_linked_silent(func):
     return wrapped
 
 
-def check_is_reply_to_user_linked_verbose(func):
+def check_is_reply_verbose(func):
 
     """
-    Checks if the message is a reply to a message linked to a user
+    Checks if the message is a reply to any message
     and warns on otherwise.
     """
 
     def wrapped(update: Update, context: CallbackContext):
 
-        database = context.bot_data["database"]
         reply = update.message.reply_to_message
-        if reply and database.get_user_id(reply.message_id):
+        if reply:
             func(update, context)
         else:
-            update.message.reply_html(Message.NOT_LINKED)
+            update.message.reply_html(Message.INVALID_REPLY)
 
     return wrapped
 
