@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
        user_id BIGINT PRIMARY KEY,
-       username TEXT UNIQUE,
+       username TEXT,
        full_name TEXT,
        status BOOLEAN DEFAULT FALSE
 );
