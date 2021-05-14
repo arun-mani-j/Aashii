@@ -1,6 +1,39 @@
 from telegram import Update
+from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 from Aashii.constants import Message
+
+
+def check_is_blocked_by_user(func):
+
+    """
+    Checks if the bot is blocked by the user.
+    """
+
+    def wrapped(update: Update, context: CallbackContext):
+
+        database = context.bot_data["database"]
+
+        try:
+            func(update, context)
+        except Unauthorized:
+            message = (
+                update.callback_query.message
+                if update.callback_query
+                else update.message
+            )
+            user_message_id = (
+                update.callback_query.message.message_id
+                if update.callback_query
+                else update.message.reply_to_message.message_id
+            )
+            user_id = database.get_user_id(user_message_id)
+            full_name = database.get_user_full_name(user_id)
+            text = Message.BLOCKED_BY_USER.format(USER_ID=user_id, FULL_NAME=full_name)
+            message = message.reply_html(text)
+            database.add_message(message.message_id, user_id)
+
+    return wrapped
 
 
 def check_is_group_command(func):

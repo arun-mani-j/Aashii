@@ -3,6 +3,7 @@ from telegram.ext import CallbackContext
 from Aashii.constants import Button, Literal, Message
 from Aashii.utils.misc import announce, block_user, unblock_user
 from Aashii.utils.wrappers import (
+    check_is_blocked_by_user,
     check_is_group_command,
     check_is_reply_verbose,
     check_user_status,
@@ -33,6 +34,7 @@ def announce_users(update: Update, context: CallbackContext):
 
 
 @check_is_group_command
+@check_is_blocked_by_user
 def block_user_cl(update: Update, context: CallbackContext):
 
     """
@@ -124,7 +126,7 @@ def send_start(update: Update, context: CallbackContext):
     try:
         mem = context.bot.get_chat_member(Literal.CHAT_GROUP_ID, user.id)
     except Exception:
-        status = "Left"
+        status = Message.FALLBACK_STATUS
     else:
         status = mem.status.title()
 
@@ -160,6 +162,7 @@ def static_command(update: Update, _: CallbackContext):
 
 
 @check_is_group_command
+@check_is_blocked_by_user
 def unblock_user_cl(update: Update, context: CallbackContext):
 
     """

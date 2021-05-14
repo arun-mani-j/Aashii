@@ -1,11 +1,16 @@
 from time import sleep
 from telegram import ChatAction, Update
+from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 from Aashii.constants import Literal
-from Aashii.utils.wrappers import check_is_reply_to_user_linked_silent
+from Aashii.utils.wrappers import (
+    check_is_blocked_by_user,
+    check_is_reply_to_user_linked_silent,
+)
 
 
 @check_is_reply_to_user_linked_silent
+@check_is_blocked_by_user
 def forward_to_user(update: Update, context: CallbackContext):
 
     """

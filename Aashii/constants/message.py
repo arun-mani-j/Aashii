@@ -52,9 +52,15 @@ class Message:
 
     BLOCKED_USER_STATUS = "You are blocked from contacting the admins."
 
+    BLOCKED_BY_USER = "<a href='tg://user?id={USER_ID}'>{FULL_NAME}</a> has blocked me from contacting them."
+
     CANCELLED_ANNOUNCEMENT = (
         "Cancelled announcement at <code>{PROGRESS}</code>% progress."
     )
+
+    ERROR = "Oops ! I faced an error : <code>{ERROR}</code>."
+
+    FALLBACK_STATUS = "Left"
 
     HELP_GROUP = (
         "Hey there ! It's <b>Aashii</b> here to help you "
