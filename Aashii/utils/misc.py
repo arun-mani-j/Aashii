@@ -70,9 +70,11 @@ def error_handler(_: object, context: CallbackContext):
 
     error = Message.ERROR.format(ERROR=context.error)
     try:
-        context.bot.send_message(text=error, chat_id=Literal.ADMINS_GROUP_ID)
+        context.bot.send_message(
+            chat_id=Literal.ADMINS_GROUP_ID, text=error, parse_mode=ParseMode.HTML
+        )
     except:
-        logging.error(error)
+        logging.error(str(context.error))
 
 
 def unblock_user(user_id: int, context: CallbackContext):
