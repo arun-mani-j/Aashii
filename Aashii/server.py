@@ -20,7 +20,7 @@ class Server:
                 handler = handler_type(**h_kwargs)
                 dispatcher.add_handler(handler, *d_args)
 
-            dispatcher.add_error_handler(error_handler)
+        dispatcher.add_error_handler(error_handler)
 
     def listen(self, listen: str, port: int, url: str, url_path: str):
 
