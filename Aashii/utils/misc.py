@@ -5,7 +5,7 @@ Miscellaneous functions.
 import logging
 from telegram import ParseMode
 from telegram.ext import CallbackContext
-from Aashii.constants import Message
+from Aashii.constants import Literal, Message
 
 
 def announce(context: CallbackContext):
@@ -60,6 +60,19 @@ def block_user(user_id: int, context: CallbackContext):
     context.bot.send_message(
         chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
     )
+
+
+def error_handler(_: object, context: CallbackContext):
+
+    """
+    Handles the known errors and exceptions.
+    """
+
+    error = Message.ERROR.format(ERROR=context.error)
+    try:
+        context.bot.send_message(text=error, chat_id=Literal.ADMINS_GROUP_ID)
+    except:
+        logging.error(error)
 
 
 def unblock_user(user_id: int, context: CallbackContext):
