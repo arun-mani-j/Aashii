@@ -5,7 +5,6 @@ from Aashii.utils.misc import block_user, unblock_user
 from Aashii.utils.wrappers import check_is_blocked_by_user
 
 
-@check_is_blocked_by_user
 def block_user_cb(update: Update, context: CallbackContext):
 
     """
@@ -52,7 +51,6 @@ def connect_admin_cb(update: Update, context: CallbackContext):
     database.add_message(message.message_id, user_id)
 
 
-@check_is_blocked_by_user
 def unblock_user_cb(update: Update, context: CallbackContext):
 
     """

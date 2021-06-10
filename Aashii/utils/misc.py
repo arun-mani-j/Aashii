@@ -4,6 +4,7 @@ Miscellaneous functions.
 
 import logging
 from telegram import ParseMode
+from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 from Aashii.constants import Literal, Message
 
@@ -57,9 +58,12 @@ def block_user(user_id: int, context: CallbackContext):
 
     database = context.bot_data["database"]
     database.set_user_status(user_id, True)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
+    try:
+        context.bot.send_message(
+            chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+        )
+    except Unauthorized:
+        pass
 
 
 def error_handler(_: object, context: CallbackContext):
@@ -85,6 +89,9 @@ def unblock_user(user_id: int, context: CallbackContext):
 
     database = context.bot_data["database"]
     database.set_user_status(user_id, False)
-    context.bot.send_message(
-        chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
-    )
+    try:
+        context.bot.send_message(
+            chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+        )
+    except Unauthorized:
+        pass

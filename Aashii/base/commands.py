@@ -34,7 +34,6 @@ def announce_users(update: Update, context: CallbackContext):
 
 
 @check_is_group_command
-@check_is_blocked_by_user
 def block_user_cl(update: Update, context: CallbackContext):
 
     """
@@ -162,7 +161,6 @@ def static_command(update: Update, _: CallbackContext):
 
 
 @check_is_group_command
-@check_is_blocked_by_user
 def unblock_user_cl(update: Update, context: CallbackContext):
 
     """
