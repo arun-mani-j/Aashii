@@ -91,7 +91,9 @@ def unblock_user(user_id: int, context: CallbackContext):
     database.set_user_status(user_id, False)
     try:
         context.bot.send_message(
-            chat_id=user_id, text=Message.UNBLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+            chat_id=user_id,
+            text=Message.UNBLOCKED_USER_STATUS,
+            parse_mode=ParseMode.HTML,
         )
     except Unauthorized:
         pass

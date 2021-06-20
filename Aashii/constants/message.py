@@ -42,7 +42,7 @@ class Message:
     )
 
     ANNOUNCEMENT_PULSE = (
-        "Annoucement in due.\n"
+        "Announcement in due.\n"
         " • <b>Sent</b> : <code>{SENT}</code>\n"
         " • <b>Failed</b> : <code>{FAILED}</code>\n"
         " • <b>Progress</b> : <code>{PROGRESS}</code>%."
