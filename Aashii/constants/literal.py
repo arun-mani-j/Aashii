@@ -20,3 +20,7 @@ class Literal:
     DELAY_SECONDS = int(os.getenv("DELAY_SECONDS", "2"))
 
     GROUP_NAME = os.getenv("GROUP_NAME", "Illuminati")
+
+    STEP = int(os.getenv("STEP", "10"))
+
+    TRACEBACK_VALUE = int(os.getenv("TRACEBACK_VALUE", "2"))

@@ -58,7 +58,7 @@ class Message:
         "Cancelled announcement at <code>{PROGRESS}</code>% progress."
     )
 
-    ERROR = "Oops ! I faced an error : <code>{ERROR}</code>."
+    ERROR = "Oops ! I faced an error : <code>{ERROR}</code>\n<code>{TRACEBACK}</code>"
 
     FALLBACK_STATUS = "Left"
 

@@ -3,6 +3,7 @@ Miscellaneous functions.
 """
 
 import logging
+import traceback
 from telegram import ParseMode
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
@@ -17,37 +18,44 @@ def announce(context: CallbackContext):
 
     announcement = context.bot_data["announcement"]
     log_message = context.bot_data["log_message"]
+    sent = context.bot_data["sent"]
+    failed = context.bot_data["failed"]
+    total = context.bot_data["total"]
+    steps = context.bot_data["steps"]
 
     try:
         user_id = context.bot_data["users"].pop(0)
     except IndexError:
-        sent = context.bot_data.pop("sent")
-        failed = context.bot_data.pop("failed")
-        total = context.bot_data.pop("total")
         text = Message.ANNOUNCEMENT_DONE.format(SENT=sent, FAILED=failed, TOTAL=total)
         del context.bot_data["announcement"]
         del context.bot_data["log_message"]
         del context.bot_data["users"]
+        del context.bot_data["sent"]
+        del context.bot_data["failed"]
+        del context.bot_data["total"]
+        del context.bot_data["steps"]
         context.job.schedule_removal()
     else:
         try:
             announcement.copy(user_id)
         except Exception as e:
             logging.error(str(e))
-            context.bot_data["failed"] = context.bot_data["failed"] + 1
+            context.bot_data["failed"] = failed + 1
         else:
-            context.bot_data["sent"] = context.bot_data["sent"] + 1
+            context.bot_data["sent"] = sent + 1
         finally:
-            sent = context.bot_data["sent"]
-            failed = context.bot_data["failed"]
-            count = sent + failed
+            count = sent + failed + 1
             total = context.bot_data["total"]
             percent = int((count / total) * 100)
-            text = Message.ANNOUNCEMENT_PULSE.format(
-                SENT=sent, FAILED=failed, PROGRESS=percent
-            )
+            if count in steps:
+                text = Message.ANNOUNCEMENT_PULSE.format(
+                    SENT=sent, FAILED=failed, PROGRESS=percent
+                )
+            else:
+                text = None
     finally:
-        log_message.edit_text(text, parse_mode=ParseMode.HTML)
+        if text:
+            log_message.edit_text(text, parse_mode=ParseMode.HTML)
 
 
 def block_user(user_id: int, context: CallbackContext):
@@ -72,13 +80,16 @@ def error_handler(_: object, context: CallbackContext):
     Handles the known errors and exceptions.
     """
 
-    error = Message.ERROR.format(ERROR=context.error)
+    tb = "".join(
+        traceback.format_tb(context.error.__traceback__, Literal.TRACEBACK_VALUE)
+    )
+    error = Message.ERROR.format(ERROR=context.error, TRACEBACK=tb)
     try:
         context.bot.send_message(
             chat_id=Literal.ADMINS_GROUP_ID, text=error, parse_mode=ParseMode.HTML
         )
     except:
-        logging.error(str(context.error))
+        logging.error(error)
 
 
 def unblock_user(user_id: int, context: CallbackContext):

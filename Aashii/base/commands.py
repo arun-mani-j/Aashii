@@ -26,6 +26,8 @@ def announce_users(update: Update, context: CallbackContext):
     context.bot_data["announcement"] = update.message.reply_to_message
     context.bot_data["sent"] = context.bot_data["failed"] = 0
     context.bot_data["users"], context.bot_data["total"] = database.get_users()
+    step = len(context.bot_data) // Literal.STEP
+    context.bot_data["steps"] = [(step * i) for i in range(1, Literal.STEP + 1)]
     text = Message.ANNOUNCEMENT_INIT.format(TOTAL=context.bot_data["total"])
     context.bot_data["log_message"] = update.message.reply_html(text)
     context.job_queue.run_repeating(

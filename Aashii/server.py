@@ -37,7 +37,8 @@ class Server:
     def poll(self, poll_interval: int = 0):
 
         self.updater.start_polling(
-            poll_interval=poll_interval, allowed_updates=["callback_query", "message"]
+            poll_interval=poll_interval,
+            allowed_updates=["callback_query", "message"],
         )
         logging.info("Started polling ...")
         self.updater.idle()
