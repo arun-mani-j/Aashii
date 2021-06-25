@@ -21,6 +21,8 @@ class Literal:
 
     GROUP_NAME = os.getenv("GROUP_NAME", "Illuminati")
 
+    INFORM_ERROR = os.getenv("INFORM_ERROR", "TRUE") == "TRUE"
+
     STEP = int(os.getenv("STEP", "10"))
 
-    TRACEBACK_VALUE = int(os.getenv("TRACEBACK_VALUE", "2"))
+    TRACEBACK_VALUE = int(os.getenv("TRACEBACK_VALUE", "5"))

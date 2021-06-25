@@ -80,16 +80,22 @@ def error_handler(_: object, context: CallbackContext):
     Handles the known errors and exceptions.
     """
 
+    error = str(context.error)
     tb = "".join(
         traceback.format_tb(context.error.__traceback__, Literal.TRACEBACK_VALUE)
     )
-    error = Message.ERROR.format(ERROR=context.error, TRACEBACK=tb)
-    try:
-        context.bot.send_message(
-            chat_id=Literal.ADMINS_GROUP_ID, text=error, parse_mode=ParseMode.HTML
-        )
-    except:
-        logging.error(error)
+    error_text = Message.ERROR.format(ERROR=error, TRACEBACK=tb)
+    if Literal.INFORM_ERROR:
+        try:
+            context.bot.send_message(
+                chat_id=Literal.ADMINS_GROUP_ID,
+                text=error_text,
+                parse_mode=ParseMode.HTML,
+            )
+        except:
+            logging.error("%s\n%s", error, tb)
+    else:
+        logging.error("%s\n%s", error, tb)
 
 
 def unblock_user(user_id: int, context: CallbackContext):
