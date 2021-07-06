@@ -17,7 +17,7 @@ commands = {
         BotCommand("unblock", "Unblocks the user"),
     ],
     "all": [
-        BotCommand("help", "Help on usgae"),
+        BotCommand("help", "Help on usage"),
         BotCommand("start", "Start the adventure"),
     ],
     "private": [_command(fname) for fname in os.listdir("data/static")],
