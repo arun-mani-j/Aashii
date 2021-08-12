@@ -18,7 +18,6 @@ class Server:
         admins = commands["admins"] + commands["all"]
         private = commands["private"] + commands["all"]
         self.updater.bot.set_my_commands(admins, scope=Scope.ADMINS)
-        self.updater.bot.set_my_commands(commands["all"], scope=Scope.ALL)
         self.updater.bot.set_my_commands(private, scope=Scope.PRIVATE)
 
     def _setup_handlers(self, handlers: dict):
