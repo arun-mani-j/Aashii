@@ -8,7 +8,7 @@ from Aashii.utils.misc import dehtml
 def _command(fname):
     cmd = fname
     with open(f"data/static/{fname}", "r") as staticfp:
-        dsc = dehtml("", staticfp.read(80)) + "…"
+        dsc = dehtml(staticfp.read(80)) + "…"
     return BotCommand(cmd, dsc)
 
 
