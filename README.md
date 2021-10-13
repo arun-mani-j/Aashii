@@ -36,7 +36,6 @@ The file can be formatted using HTML.
 | --------------------- | -------------------------------------------------------------------- |
 | ADMINS_GROUP_ID       | Admins group ID.⁽¹⁾                                                  |
 | ANNOUNCEMENT_INTERVAL | The delay between announcing messages to each user.                  |
-| BOT_TOKEN             | Token of the bot.⁽¹⁾                                                 |
 | CHAT_GROUP_ID         | Chat group ID.⁽¹⁾                                                    |
 | DATABASE_URL          | Database connection URL to connect to PostgreSQL server.⁽¹⁾          |
 | DELAY_SECONDS         | The delay between forward of message between users and admins.       |
@@ -47,6 +46,7 @@ The file can be formatted using HTML.
 | POLL_INTERVAL         | The interval between subsequent polling.                             |
 | PORT                  | The port to listen for webhooks.                                     |
 | STEP                  | Number of divisions at which the announcement statistics is updated. |
+| TOKEN                 | Token of the bot.⁽¹⁾                                                 |
 | TRACEBACK_VALUE       | The depth of error description.                                      |
 | URL                   | The base URL for webhooks.                                           |
 
