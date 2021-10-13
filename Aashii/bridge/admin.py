@@ -36,7 +36,7 @@ def edit_admin_message(update: Update, context: CallbackContext):
 def forward_to_user(update: Update, context: CallbackContext):
     """Send the message from admins to the user."""
     user_id, reply_to = get_user_src_message(update, context)
-
+    print("USER", user_id, update.message.text)
     if not user_id:
         return
 

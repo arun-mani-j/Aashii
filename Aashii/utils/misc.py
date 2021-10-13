@@ -63,9 +63,14 @@ def get_user_src_message(update: Update, context: CallbackContext):
     """Return user ID and source message ID if the message is a reply to user's message."""
     database = context.bot_data["database"]
     message = update.edited_message or update.message or update.callback_query.message
+    ignore = bool(
+        (message.text and message.text.startswith("!"))
+        or (message.caption and message.caption.startswith("!"))
+    )
     reply = message.reply_to_message
+    user_id, src_msg_id = (None, None)
 
-    if not reply:
+    if ignore or (not reply):
         return (None, None)
 
     if reply.from_user.id == context.bot.id:
