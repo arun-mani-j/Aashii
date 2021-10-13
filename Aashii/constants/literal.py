@@ -1,15 +1,10 @@
-"""
-Contains Literal object.
-"""
+"""Contains Literal object."""
 
 import os
 
 
 class Literal:
-
-    """
-    Lieral contains values that are simple and never change, like admins' group ID.
-    """
+    """Lieral contains values that are simple and never change, like admins' group ID."""
 
     ADMINS_GROUP_ID = os.getenv("ADMINS_GROUP_ID")
 
@@ -17,7 +12,7 @@ class Literal:
 
     CHAT_GROUP_ID = os.getenv("CHAT_GROUP_ID")
 
-    DELAY_SECONDS = int(os.getenv("DELAY_SECONDS", "2"))
+    DELAY_SECONDS = int(os.getenv("DELAY_SECONDS", "1"))
 
     GROUP_NAME = os.getenv("GROUP_NAME", "Illuminati")
 

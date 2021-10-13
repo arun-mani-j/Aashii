@@ -1,15 +1,11 @@
-"""
-Contains Button object.
-"""
+"""Contains Button object."""
+
 from telegram import InlineKeyboardButton
 from .label import Label
 
 
 class Button:
-
-    """
-    Button contains inline keyboard buttons used in reply markup.
-    """
+    """Button contains inline keyboard buttons used in reply markup."""
 
     BLOCK = InlineKeyboardButton(text=Label.BLOCK, callback_data="block")
 

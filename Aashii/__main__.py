@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Aashii is a bot to maintain communication between users and admins."""
 
 from os import getenv
 from Aashii import Server

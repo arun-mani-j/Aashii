@@ -1,23 +1,32 @@
-from telegram import InlineKeyboardMarkup, ParseMode, Update
+"""Contains handlers related to commands."""
+
+from telegram import Bot, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
 from Aashii.constants import Button, Literal, Message
-from Aashii.utils.misc import announce, block_user, unblock_user
+from Aashii.utils.broadcast import announce
+from Aashii.utils.misc import block_user, get_user_src_message, unblock_user
 from Aashii.utils.wrappers import (
-    check_is_blocked_by_user,
     check_is_group_command,
     check_is_reply_verbose,
     check_user_status,
 )
 
 
+def _get_membership(user_id: int, bot: Bot):
+    try:
+        mem = bot.get_chat_member(Literal.CHAT_GROUP_ID, user_id)
+    except Exception:
+        membership = Message.FALLBACK_STATUS
+    else:
+        membership = mem.status.title()
+
+    return membership
+
+
 @check_is_group_command
 @check_is_reply_verbose
 def announce_users(update: Update, context: CallbackContext):
-
-    """
-    Announces the replies message to every user in database.
-    """
-
+    """Announce the replied message to every user in database."""
     if context.bot_data.get("announcement"):
         update.message.reply_html(Message.ANNOUNCEMENT_IN_DUE)
         return
@@ -37,42 +46,29 @@ def announce_users(update: Update, context: CallbackContext):
 
 @check_is_group_command
 def block_user_cl(update: Update, context: CallbackContext):
-
-    """
-    Blocks the user from contacting the admins based on command.
-    """
-
+    """Block the user from contacting the admins based on command."""
     database = context.bot_data["database"]
 
-    if update.message.reply_to_message:
-        message_id = update.message.reply_to_message.message_id
-        user_id = database.get_user_id(message_id)
-
+    if context.args and context.args[0].isdigit():
+        user_id = int(context.args[0])
+    else:
+        user_id, _ = get_user_src_message(update, context)
         if not user_id:
             update.message.reply_html(Message.INVALID_REPLY)
             return
 
-    elif context.args and context.args[0].isdigit():
-        user_id = int(context.args[0])
-    else:
-        update.message.reply_html(Message.INVALID_REPLY)
-        return
-
-    block_user(user_id, context)
+    msg_id = block_user(user_id, context)
 
     full_name = database.get_user_full_name(user_id)
     text = Message.BLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
     message = update.message.reply_html(text)
-    database.add_message(message.message_id, user_id)
+    database.add_admin_message(update.message.message_id, user_id, msg_id)
+    database.add_user_message(1, user_id, message.message_id)
 
 
 @check_is_group_command
 def cancel_announcement(update: Update, context: CallbackContext):
-
-    """
-    Cancels an announcement if scheduled.
-    """
-
+    """Cancel an announcement if scheduled."""
     if context.bot_data.pop("announcement", None):
         job = context.job_queue.get_jobs_by_name("announcement")[0]
         job.schedule_removal()
@@ -85,7 +81,7 @@ def cancel_announcement(update: Update, context: CallbackContext):
             SENT=sent, FAILED=failed, PROGRESS=percent
         )
         text = Message.CANCELLED_ANNOUNCEMENT.format(PROGRESS=percent)
-        log_message.edit_text(edit_text, parse_mode=ParseMode.HTML)
+        log_message.edit_text(edit_text)
         del context.bot_data["users"]
     else:
         text = Message.NO_ANNOUNCEMENT
@@ -94,12 +90,8 @@ def cancel_announcement(update: Update, context: CallbackContext):
 
 
 def send_help(update: Update, _):
-
-    """
-    Sends the bot's usage guide intended for private or
-    group depending upon the place of invocation.
-    """
-
+    """Send the bot's usage guide intended for private or\
+    group depending upon the place of invocation."""
     if update.message.chat.type == update.message.chat.PRIVATE:
         update.message.reply_html(text=Message.HELP_PRIVATE)
     else:
@@ -108,12 +100,8 @@ def send_help(update: Update, _):
 
 @check_user_status
 def send_start(update: Update, context: CallbackContext):
-
-    """
-    Connects the user with admins group in case of private chat,
-    else shows the bot's description.
-    """
-
+    """Connect the user with admins group in case of private chat,\
+    else show the bot's description."""
     if update.message.chat.type != update.message.chat.PRIVATE:
         update.message.reply_html(Message.START_GROUP)
         return
@@ -122,19 +110,16 @@ def send_start(update: Update, context: CallbackContext):
     database = context.bot_data["database"]
     keyboard = InlineKeyboardMarkup.from_row(buttons)
     user = update.message.from_user
-    full_name = user.full_name
-
-    try:
-        mem = context.bot.get_chat_member(Literal.CHAT_GROUP_ID, user.id)
-    except Exception:
-        status = Message.FALLBACK_STATUS
-    else:
-        status = mem.status.title()
-
     user_id = user.id
-    username = f"@{user.username}" if user.username else Message.NO_USERNAME
+    full_name = user.full_name
+    membership = _get_membership(user_id, context.bot)
+    username = f"@{user.username}" if user.username else None
     text = Message.USER_CONNECTED.format(
-        FULL_NAME=full_name, USER_ID=user_id, USERNAME=username, STATUS=status
+        FULL_NAME=full_name,
+        USER_ID=user_id,
+        USERNAME=username,
+        MEMBERSHIP=membership,
+        BLOCKED=False,
     )
 
     update.message.reply_html(
@@ -144,14 +129,12 @@ def send_start(update: Update, context: CallbackContext):
         chat_id=Literal.ADMINS_GROUP_ID,
         text=text,
         reply_markup=keyboard,
-        parse_mode=ParseMode.HTML,
     )
-    database.add_user(user_id, username, full_name)
-    database.add_message(message.message_id, user_id)
+    database.add_user_message(update.message.message_id, user_id, message.message_id)
 
 
 def static_command(update: Update, _: CallbackContext):
-
+    """Send static command mentioned in static folder."""
     command = update.message.text[1:].split("@")[0]
 
     try:
@@ -164,30 +147,46 @@ def static_command(update: Update, _: CallbackContext):
 
 @check_is_group_command
 def unblock_user_cl(update: Update, context: CallbackContext):
-
-    """
-    Unblocks the user from contacting the admins based on command.
-    """
-
+    """Unblock the user from contacting the admins based on command."""
     database = context.bot_data["database"]
 
-    if update.message.reply_to_message:
-        message_id = update.message.reply_to_message.message_id
-        user_id = database.get_user_id(message_id)
-
+    if context.args and context.args[0].isdigit():
+        user_id = int(context.args[0])
+    else:
+        user_id, _ = get_user_src_message(update, context)
         if not user_id:
             update.message.reply_html(Message.INVALID_REPLY)
             return
 
-    elif context.args and context.args[0].isdigit():
-        user_id = int(context.args[0])
-    else:
-        update.message.reply_html(Message.INVALID_REPLY)
-        return
-
-    unblock_user(user_id, context)
+    msg_id = unblock_user(user_id, context)
 
     full_name = database.get_user_full_name(user_id)
     text = Message.UNBLOCKED_USER.format(USER_ID=user_id, FULL_NAME=full_name)
     message = update.message.reply_html(text)
-    database.add_message(message.message_id, user_id)
+    database.add_admin_message(update.message.message_id, user_id, msg_id)
+    database.add_user_message(1, user_id, message.message_id)
+
+
+@check_is_group_command
+def whois(update: Update, context: CallbackContext):
+    """Get information about user replied to or given as argument."""
+    database = context.bot_data["database"]
+
+    if context.args and context.args[0].isdigit():
+        user_id = int(context.args[0])
+    else:
+        user_id, _ = get_user_src_message(update, context)
+        if not user_id:
+            update.message.reply_html(Message.INVALID_REPLY)
+            return
+
+    username, full_name, blocked = database.get_user(user_id)
+    membership = _get_membership(user_id, context.bot)
+    text = Message.USER.format(
+        FULL_NAME=full_name,
+        USER_ID=user_id,
+        USERNAME=username,
+        MEMBERSHIP=membership,
+        BLOCKED=blocked,
+    )
+    update.effective_message.reply_html(text)

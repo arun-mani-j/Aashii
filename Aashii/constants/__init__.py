@@ -1,6 +1,4 @@
-"""
-Collection of constant objects.
-"""
+"""Collection of constant objects."""
 
 from .button import Button
 from .label import Label

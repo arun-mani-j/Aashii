@@ -1,3 +1,5 @@
+"""Aashii is a bot to maintain communication between users and admins."""
+
 from os import getenv
 import logging
 from .server import Server

@@ -1,15 +1,18 @@
 # Aashii
 
-_Aashii_ is a simple bot to help members contact admins of a group in Telegram.
+_Aashii_ is a simple and yet powerful bot to help members contact admins of a group in Telegram.
 
 # Commands
 
-- /announce - Sends the message to all subscribers of bot.
+Except `/cancel`, `/help` and `/start`, all other commands require it to be a reply to a message. For the commands `/block`, `/unblock`, `/whois`, you can either pass a user ID or reply it to a message from the bot.
+
+- /announce - Sends the quoted message to all subscribers of bot.
 - /block - Blocks the user from contacting the admins, you can also give the user ID to be blocked.
 - /cancel - Cancels the announcement in progress.
 - /help - Sends the help message.
 - /start - Starts the bot.
 - /unblock - Unblocks the user, you can also give the user ID to be unblocked.
+- /whois - Gives details about the user of given user ID or sender of quoted message.
 
 # Static Commands
 
@@ -30,7 +33,7 @@ The file can be formatted using HTML.
 # Environment Variables
 
 | Name                  | Description                                                          |
-| --------------------- | --------------------------------------------------------------       |
+| --------------------- | -------------------------------------------------------------------- |
 | ADMINS_GROUP_ID       | Admins group ID.⁽¹⁾                                                  |
 | ANNOUNCEMENT_INTERVAL | The delay between announcing messages to each user.                  |
 | BOT_TOKEN             | Token of the bot.⁽¹⁾                                                 |

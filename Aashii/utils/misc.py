@@ -1,85 +1,47 @@
-"""
-Miscellaneous functions.
-"""
+"""Miscellaneous functions."""
 
 import logging
 import traceback
-from telegram import ParseMode
+import re
+from telegram import Update
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 from Aashii.constants import Literal, Message
 
+_p = re.compile("<[^>]*>")
 
-def announce(context: CallbackContext):
 
-    """
-    Announces the announcement one by one.
-    """
-
-    announcement = context.bot_data["announcement"]
-    log_message = context.bot_data["log_message"]
-    sent = context.bot_data["sent"]
-    failed = context.bot_data["failed"]
-    total = context.bot_data["total"]
-    steps = context.bot_data["steps"]
-
-    try:
-        user_id = context.bot_data["users"].pop(0)
-    except IndexError:
-        text = Message.ANNOUNCEMENT_DONE.format(SENT=sent, FAILED=failed, TOTAL=total)
-        del context.bot_data["announcement"]
-        del context.bot_data["log_message"]
-        del context.bot_data["users"]
-        del context.bot_data["sent"]
-        del context.bot_data["failed"]
-        del context.bot_data["total"]
-        del context.bot_data["steps"]
-        context.job.schedule_removal()
-    else:
-        try:
-            announcement.copy(user_id)
-        except Exception as e:
-            logging.error(str(e))
-            context.bot_data["failed"] = failed + 1
-        else:
-            context.bot_data["sent"] = sent + 1
-        finally:
-            count = sent + failed + 1
-            total = context.bot_data["total"]
-            percent = int((count / total) * 100)
-            if count in steps:
-                text = Message.ANNOUNCEMENT_PULSE.format(
-                    SENT=sent, FAILED=failed, PROGRESS=percent
-                )
-            else:
-                text = None
-    finally:
-        if text:
-            log_message.edit_text(text, parse_mode=ParseMode.HTML)
+def add_user(update: Update, context: CallbackContext):
+    """Add or update the user to database."""
+    database = context.bot_data["database"]
+    user = update.effective_message.from_user
+    user_id = user.id
+    full_name = user.full_name
+    username = f"@{user.username}" if user.username else None
+    database.add_user(user_id, username, full_name)
 
 
 def block_user(user_id: int, context: CallbackContext):
-
-    """
-    Blocks the user from contacting admins and informs the user.
-    """
-
+    """Blocks the user from contacting admins and informs the user."""
     database = context.bot_data["database"]
-    database.set_user_status(user_id, True)
+    database.set_user_blocked(user_id, True)
     try:
-        context.bot.send_message(
-            chat_id=user_id, text=Message.BLOCKED_USER_STATUS, parse_mode=ParseMode.HTML
+        msg = context.bot.send_message(
+            chat_id=user_id, text=Message.BLOCKED_USER_STATUS
         )
     except Unauthorized:
         pass
+    else:
+        return msg.message_id
+
+
+def dehtml(text: str):
+    """Return deHTMLed string from given text."""
+    return _p.sub("", text)
 
 
 def error_handler(_: object, context: CallbackContext):
-
-    """
-    Handles the known errors and exceptions.
-    """
-
+    """Handle the known errors and exceptions."""
     error = str(context.error)
     tb = "".join(
         traceback.format_tb(context.error.__traceback__, Literal.TRACEBACK_VALUE)
@@ -90,7 +52,6 @@ def error_handler(_: object, context: CallbackContext):
             context.bot.send_message(
                 chat_id=Literal.ADMINS_GROUP_ID,
                 text=error_text,
-                parse_mode=ParseMode.HTML,
             )
         except:
             logging.error("%s\n%s", error, tb)
@@ -98,19 +59,35 @@ def error_handler(_: object, context: CallbackContext):
         logging.error("%s\n%s", error, tb)
 
 
-def unblock_user(user_id: int, context: CallbackContext):
-
-    """
-    Unblocks the user from contacting admins and informs the user.
-    """
-
+def get_user_src_message(update: Update, context: CallbackContext):
+    """Return user ID and source message ID if the message is a reply to user's message."""
     database = context.bot_data["database"]
-    database.set_user_status(user_id, False)
+    message = update.edited_message or update.message or update.callback_query.message
+    reply = message.reply_to_message
+
+    if not reply:
+        return (None, None)
+
+    if reply.from_user.id == context.bot.id:
+        user_id, src_msg_id = database.get_user_message_id_from_users(reply.message_id)
+    else:
+        user_id, src_msg_id = database.get_user_dest_message_id_from_admins(
+            reply.message_id
+        )
+
+    return (user_id, src_msg_id)
+
+
+def unblock_user(user_id: int, context: CallbackContext):
+    """Unblock the user from contacting admins and informs the user."""
+    database = context.bot_data["database"]
+    database.set_user_blocked(user_id, False)
     try:
-        context.bot.send_message(
+        msg = context.bot.send_message(
             chat_id=user_id,
             text=Message.UNBLOCKED_USER_STATUS,
-            parse_mode=ParseMode.HTML,
         )
     except Unauthorized:
         pass
+    else:
+        return msg.message_id
