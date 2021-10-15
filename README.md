@@ -45,6 +45,7 @@ The file can be formatted using HTML.
 | LOG_FILE              | The file to log errors.                                              |
 | POLL_INTERVAL         | The interval between subsequent polling.                             |
 | PORT                  | The port to listen for webhooks.                                     |
+| REPLY_CHARACTER       | Only messages with this character prepended will be sent to users.   |
 | STEP                  | Number of divisions at which the announcement statistics is updated. |
 | TOKEN                 | Token of the bot.⁽¹⁾                                                 |
 | TRACEBACK_VALUE       | The depth of error description.                                      |

@@ -59,21 +59,28 @@ def error_handler(_: object, context: CallbackContext):
         logging.error("%s\n%s", error, tb)
 
 
+def get_membership(user_id: int, context: CallbackContext):
+    """Return membership of user."""
+    try:
+        mem = context.bot.get_chat_member(Literal.CHAT_GROUP_ID, user_id)
+    except Exception:
+        membership = Message.FALLBACK_STATUS
+    else:
+        membership = mem.status.title()
+
+    return membership
+
+
 def get_user_src_message(update: Update, context: CallbackContext):
     """Return user ID and source message ID if the message is a reply to user's message."""
     database = context.bot_data["database"]
-    message = update.edited_message or update.message or update.callback_query.message
-    ignore = bool(
-        (message.text and message.text.startswith("!"))
-        or (message.caption and message.caption.startswith("!"))
-    )
+    message = update.effective_message
     reply = message.reply_to_message
-    user_id, src_msg_id = (None, None)
+    user_id, src_msg_id = None, None
 
-    if ignore or (not reply):
-        return (None, None)
-
-    if reply.from_user.id == context.bot.id:
+    if not reply:
+        pass
+    elif reply.from_user.id == context.bot.id:
         user_id, src_msg_id = database.get_user_message_id_from_users(reply.message_id)
     else:
         user_id, src_msg_id = database.get_user_dest_message_id_from_admins(
@@ -81,6 +88,15 @@ def get_user_src_message(update: Update, context: CallbackContext):
         )
 
     return (user_id, src_msg_id)
+
+
+def set_last_user(update: Update, context: CallbackContext):
+    """Set the last user based on update received. Useful for quoting."""
+    chat_id = update.effective_chat.id
+    context.bot_data["lastUserId"], context.bot_data["curUserId"] = (
+        context.bot_data.get("curUserId", 0),
+        chat_id,
+    )
 
 
 def unblock_user(user_id: int, context: CallbackContext):

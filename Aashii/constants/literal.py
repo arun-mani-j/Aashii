@@ -18,6 +18,8 @@ class Literal:
 
     INFORM_ERROR = os.getenv("INFORM_ERROR", "TRUE") == "TRUE"
 
+    REPLY_CHARACTER = os.getenv("REPLY_CHARACTER", "!")
+
     STEP = int(os.getenv("STEP", "10"))
 
     TRACEBACK_VALUE = int(os.getenv("TRACEBACK_VALUE", "5"))

@@ -22,7 +22,7 @@ def _get_from_tag(message: TMessage, quote: bool):
             FULL_NAME=message.from_user.full_name,
         )
     else:
-        entity_from = ""
+        entity_from = "\n"
 
     if message.forward_sender_name:
         name = message.forward_sender_name
@@ -65,7 +65,7 @@ def _get_quotable(message: TMessage, from_tag: str):
     text, send_from = message.text_html_urled, True
     tag_len = len(dehtml(from_tag))
 
-    if not from_tag:
+    if not from_tag.strip():
         return text, caption, False
 
     if message.text and (tag_len + len(message.text) < MAX_MESSAGE_LENGTH):
@@ -159,15 +159,7 @@ def send_message(
     quote: bool,
 ):
     """Send message to given user after proper quotation."""
-    if anonymous:
-        # No need to quote, so just copy it.
-        msg = message.copy(
-            chat_id=to_user,
-            reply_to_message_id=reply_to,
-        )
-        return [msg.message_id]
-
-    from_tag = _get_from_tag(message, quote)
+    from_tag = _get_from_tag(message, quote) if not anonymous else ""
     text, caption, send_from = _get_quotable(message, from_tag)
     msg: TMessage = None
     msgs = []
@@ -192,7 +184,7 @@ def send_message(
 
     msgs.append(msg.message_id)
 
-    if send_from:
+    if send_from and not anonymous:
         omsg = bot.send_message(
             chat_id=to_user,
             text=from_tag,

@@ -8,6 +8,35 @@ from Aashii.utils.transfer import send_edited_message, send_message
 from Aashii.utils.wrappers import check_is_blocked_by_user
 
 
+def _dereply_character(update: Update):
+    message = update.effective_message
+
+    if message.caption:
+        message.caption = message.caption[1:]
+        for entity in message.caption_entities:
+            entity.offset -= 1
+    elif message.text:
+        message.text = message.text[1:]
+        for entity in message.entities:
+            entity.offset -= 1
+
+
+def _is_legit_reply(update: Update, context: CallbackContext):
+    message = update.effective_message
+    textual = message.caption or message.text or Literal.REPLY_CHARACTER
+    should_reply = textual.startswith(Literal.REPLY_CHARACTER)
+    reply_to_admins = message.reply_to_message.from_user.id != context.bot.id
+
+    if reply_to_admins:
+        if should_reply:
+            _dereply_character(update)
+            return True
+    else:
+        return True
+
+    return False
+
+
 def _send_users(context: CallbackContext):
     database = context.bot_data["database"]
     update, user_id, reply_to = context.job.context
@@ -24,20 +53,29 @@ def edit_admin_message(update: Update, context: CallbackContext):
     message_id = update.edited_message.message_id
     user_id, dest_message_id = database.get_user_dest_message_id_from_admins(message_id)
 
-    if not user_id:
+    if not _is_legit_reply(update, context):
         return
 
-    send_edited_message(
-        context.bot, update.edited_message, dest_message_id, user_id, False
-    )
+    if user_id:
+        send_edited_message(
+            context.bot, update.edited_message, dest_message_id, user_id, False
+        )
+    else:
+        user_id, reply_to = get_user_src_message(update, context)
+        update.edited_message, update.message = update.message, update.edited_message
+        context.job_queue.run_once(
+            callback=_send_users,
+            when=Literal.DELAY_SECONDS,
+            context=(update, user_id, reply_to),
+        )
 
 
 @check_is_blocked_by_user
 def forward_to_user(update: Update, context: CallbackContext):
     """Send the message from admins to the user."""
     user_id, reply_to = get_user_src_message(update, context)
-    print("USER", user_id, update.message.text)
-    if not user_id:
+
+    if not (_is_legit_reply(update, context) and user_id):
         return
 
     context.bot.send_chat_action(chat_id=user_id, action=ChatAction.TYPING)

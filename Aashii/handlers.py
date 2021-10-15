@@ -21,7 +21,7 @@ from Aashii.base.commands import (
 from Aashii.base.callback_query import block_user_cb, connect_admin_cb, unblock_user_cb
 from Aashii.bridge.admin import edit_admin_message, forward_to_user
 from Aashii.bridge.user import edit_user_message, forward_to_admins
-from Aashii.utils.misc import add_user
+from Aashii.utils.misc import add_user, set_last_user
 
 handlers = {
     CallbackQueryHandler: [
@@ -62,5 +62,8 @@ handlers = {
         ),
         ({"filters": Filters.chat_type.private, "callback": forward_to_admins},),
     ],
-    TypeHandler: [({"type": Update, "callback": add_user}, -1)],
+    TypeHandler: [
+        ({"type": Update, "callback": add_user}, -1),
+        ({"type": Update, "callback": set_last_user}, -2),
+    ],
 }

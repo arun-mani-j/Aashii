@@ -59,9 +59,11 @@ class Server:
             allowed_updates=["callback_query", "edited_message", "message"],
         )
         logging.info("Started polling ...")
+        print("Start")
         self.updater.idle()
 
     def signal_handler(self, *_):
         """Clean up resources and sign off."""
         del self.database
         logging.info("Got an interruption, bye.")
+        print("Stop")

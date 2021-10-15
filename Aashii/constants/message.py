@@ -55,11 +55,11 @@ class Message:
 
     ENTITY_FORWARD_ANONYMOUS = "<b>Forwarded from {SENDER_NAME}</b>\n{FROM}"
 
-    ENTITY_FORWARD_CHAT = "<b>Forwarded from <a href='tg://chat?id={FROM_CHAT_ID}'>{FROM_CHAT_NAME}</a></b>\n{FROM}"
+    ENTITY_FORWARD_CHAT = "<b>Forwarded from <a href='tg://user?id={FROM_CHAT_ID}'>{FROM_CHAT_NAME}</a></b>\n{FROM}"
 
     ENTITY_FORWARD_USER = "<b>Forwarded from <a href='tg://user?id={FROM_USER_ID}'>{FROM_FULL_NAME}</a></b>\n{FROM}"
 
-    ENTITY_FROM = "<b><a href='tg://user?id={USER_ID}'>{FULL_NAME}</a></b>\n"
+    ENTITY_FROM = "<b><a href='tg://user?id={USER_ID}'>{FULL_NAME}</a></b>\n\n"
 
     ERROR = "Oops ! I faced an error : <code>{ERROR}</code>\n<code>{TRACEBACK}</code>"
 
@@ -114,6 +114,7 @@ class Message:
     UNBLOCKED_USER_STATUS = "You are now allowed to contact the admins."
 
     USER = (
+        "Name : <a href='tg://user?id={USER_ID}'>{FULL_NAME}</a>\n"
         "Username : {USERNAME}\n"
         "User ID : <code>{USER_ID}</code>\n"
         "Membership : {MEMBERSHIP}\n"
