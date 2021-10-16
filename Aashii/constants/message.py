@@ -53,6 +53,10 @@ class Message:
         "Cancelled announcement at <code>{PROGRESS}</code>% progress."
     )
 
+    DELETE_DONE = "Message deleted successfully!"
+
+    DELETE_FAILED = "I can't delete that message …"
+
     ENTITY_FORWARD_ANONYMOUS = "<b>Forwarded from {SENDER_NAME}</b>\n{FROM}"
 
     ENTITY_FORWARD_CHAT = "<b>Forwarded from <a href='tg://user?id={FROM_CHAT_ID}'>{FROM_CHAT_NAME}</a></b>\n{FROM}"

@@ -3,7 +3,7 @@
 from telegram import Update
 from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
-from Aashii.constants import Message
+from Aashii.constants import Literal, Message
 from Aashii.utils.misc import get_user_src_message
 
 
@@ -22,6 +22,8 @@ def check_is_blocked_by_user(func):
             msg = update.effective_message.reply_html(text)
             database.add_user_message(1, user_id, msg.message_id)
 
+        context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
+
     return wrapped
 
 
@@ -32,6 +34,7 @@ def check_is_group_command(func):
         message = update.edited_message or update.message
         if message.chat.type != message.chat.PRIVATE:
             func(update, context)
+            context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
         else:
             message.reply_html(Message.NOT_PRIVATE_COMMAND)
 

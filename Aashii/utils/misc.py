@@ -90,15 +90,6 @@ def get_user_src_message(update: Update, context: CallbackContext):
     return (user_id, src_msg_id)
 
 
-def set_last_user(update: Update, context: CallbackContext):
-    """Set the last user based on update received. Useful for quoting."""
-    chat_id = update.effective_chat.id
-    context.bot_data["lastUserId"], context.bot_data["curUserId"] = (
-        context.bot_data.get("curUserId", 0),
-        chat_id,
-    )
-
-
 def unblock_user(user_id: int, context: CallbackContext):
     """Unblock the user from contacting admins and informs the user."""
     database = context.bot_data["database"]

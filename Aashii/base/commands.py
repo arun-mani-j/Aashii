@@ -83,13 +83,36 @@ def cancel_announcement(update: Update, context: CallbackContext):
     update.message.reply_html(text)
 
 
-def send_help(update: Update, _):
+@check_is_group_command
+@check_is_reply_verbose
+def delete(update: Update, context: CallbackContext):
+    """Delete the message sent by admins to users."""
+    database = context.bot_data["database"]
+    reply = update.message.reply_to_message
+
+    user_id, dest_msg_id = database.get_user_dest_message_id_from_admins(
+        reply.message_id
+    )
+
+    if user_id:
+        try:
+            context.bot.delete_message(user_id, dest_msg_id)
+        except:
+            update.message.reply_html(Message.DELETE_FAILED)
+        else:
+            update.message.reply_html(Message.DELETE_DONE)
+    else:
+        update.message.reply_html(Message.NOT_LINKED)
+
+
+def send_help(update: Update, context: CallbackContext):
     """Send the bot's usage guide intended for private or\
     group depending upon the place of invocation."""
     if update.message.chat.type == update.message.chat.PRIVATE:
         update.message.reply_html(text=Message.HELP_PRIVATE)
     else:
         update.message.reply_html(text=Message.HELP_GROUP)
+        context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
 
 
 @check_user_status
@@ -98,6 +121,7 @@ def send_start(update: Update, context: CallbackContext):
     else show the bot's description."""
     if update.message.chat.type != update.message.chat.PRIVATE:
         update.message.reply_html(Message.START_GROUP)
+        context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
         return
 
     buttons = [Button.BLOCK, Button.CONNECT]
@@ -127,7 +151,7 @@ def send_start(update: Update, context: CallbackContext):
     database.add_user_message(update.message.message_id, user_id, message.message_id)
 
 
-def static_command(update: Update, _: CallbackContext):
+def static_command(update: Update, context: CallbackContext):
     """Send static command mentioned in static folder."""
     command = update.message.text[1:].split("@")[0]
 
@@ -137,6 +161,9 @@ def static_command(update: Update, _: CallbackContext):
         update.message.reply_html(Message.INVALID_COMMAND)
     else:
         update.message.reply_html(text)
+
+    if update.message.chat.type != update.message.chat.PRIVATE:
+        context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
 
 
 @check_is_group_command

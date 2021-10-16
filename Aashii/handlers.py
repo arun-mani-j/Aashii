@@ -12,6 +12,7 @@ from Aashii.base.commands import (
     announce_users,
     block_user_cl,
     cancel_announcement,
+    delete,
     send_help,
     send_start,
     static_command,
@@ -21,7 +22,7 @@ from Aashii.base.commands import (
 from Aashii.base.callback_query import block_user_cb, connect_admin_cb, unblock_user_cb
 from Aashii.bridge.admin import edit_admin_message, forward_to_user
 from Aashii.bridge.user import edit_user_message, forward_to_admins
-from Aashii.utils.misc import add_user, set_last_user
+from Aashii.utils.misc import add_user
 
 handlers = {
     CallbackQueryHandler: [
@@ -33,6 +34,7 @@ handlers = {
         ({"command": "announce", "callback": announce_users},),
         ({"command": "block", "callback": block_user_cl},),
         ({"command": "cancel", "callback": cancel_announcement},),
+        ({"command": "delete", "callback": delete},),
         ({"command": "help", "callback": send_help},),
         ({"command": "start", "callback": send_start},),
         ({"command": "unblock", "callback": unblock_user_cl},),
@@ -50,7 +52,7 @@ handlers = {
         ),
         (
             {
-                "filters": Filters.chat_type.groups & Filters.reply,
+                "filters": Filters.chat_type.groups,
                 "callback": forward_to_user,
             },
         ),
@@ -64,6 +66,5 @@ handlers = {
     ],
     TypeHandler: [
         ({"type": Update, "callback": add_user}, -1),
-        ({"type": Update, "callback": set_last_user}, -2),
     ],
 }

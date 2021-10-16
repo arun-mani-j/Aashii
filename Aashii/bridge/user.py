@@ -11,9 +11,7 @@ def _send_admins(context: CallbackContext):
     database = context.bot_data["database"]
     message = context.job.context
     user_id = message.from_user.id
-    quote = context.bot_data.get("lastUserId", 0) != context.bot_data.get(
-        "curUserId", 0
-    )
+    quote = context.bot_data.get("lastUserId", 0) != user_id
     reply = message.reply_to_message
     reply_to = None
 
@@ -31,6 +29,8 @@ def _send_admins(context: CallbackContext):
 
     for dest_msg_id in dest_msgs:
         database.add_user_message(message.message_id, user_id, dest_msg_id)
+
+    context.bot_data["lastUserId"] = user_id
 
 
 @check_user_status

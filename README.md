@@ -9,10 +9,20 @@ Except `/cancel`, `/help` and `/start`, all other commands require it to be a re
 - /announce - Sends the quoted message to all subscribers of bot.
 - /block - Blocks the user from contacting the admins, you can also give the user ID to be blocked.
 - /cancel - Cancels the announcement in progress.
+- /delete - Deletes the message of admins in users side.
 - /help - Sends the help message.
 - /start - Starts the bot.
 - /unblock - Unblocks the user, you can also give the user ID to be unblocked.
 - /whois - Gives details about the user of given user ID or sender of quoted message.
+
+# Usage
+
+Members just need to start the bot and casually message it. The messages will be sent to admins group.
+Admins reply to messages of users and this gets sent to users. If your message is reply to any admins message, it won't sent to users unless you prefix your message with `REPLY_CHARACTER`, which is by default `!`.
+That is, if you reply to an admins with `!` at start, then that message will be sent to users (of course with `!` removed).
+If there is no text field, like no caption for media or the message is a sticker, then it is forwarded too.
+
+There is `/delete` command to delete any message you sent to users by mistake.
 
 # Static Commands
 
@@ -32,24 +42,24 @@ The file can be formatted using HTML.
 
 # Environment Variables
 
-| Name                  | Description                                                          |
-| --------------------- | -------------------------------------------------------------------- |
-| ADMINS_GROUP_ID       | Admins group ID.⁽¹⁾                                                  |
-| ANNOUNCEMENT_INTERVAL | The delay between announcing messages to each user.                  |
-| CHAT_GROUP_ID         | Chat group ID.⁽¹⁾                                                    |
-| DATABASE_URL          | Database connection URL to connect to PostgreSQL server.⁽¹⁾          |
-| DELAY_SECONDS         | The delay between forward of message between users and admins.       |
-| GROUP_NAME            | Name of the group the bot represents.                                |
-| INFORM_ERROR          | Errors will be reported in admins group if `TRUE`.                   |
-| LISTEN                | The URL to listen for webhooks.                                      |
-| LOG_FILE              | The file to log errors.                                              |
-| POLL_INTERVAL         | The interval between subsequent polling.                             |
-| PORT                  | The port to listen for webhooks.                                     |
-| REPLY_CHARACTER       | Only messages with this character prepended will be sent to users.   |
-| STEP                  | Number of divisions at which the announcement statistics is updated. |
-| TOKEN                 | Token of the bot.⁽¹⁾                                                 |
-| TRACEBACK_VALUE       | The depth of error description.                                      |
-| URL                   | The base URL for webhooks.                                           |
+| Name                  | Description                                                            | Default    |
+| --------------------- | ---------------------------------------------------------------------- | ---------- |
+| ADMINS_GROUP_ID       | Admins group ID.⁽¹⁾                                                    | -          |
+| ANNOUNCEMENT_INTERVAL | The delay seconds between announcing messages to each user.            | 0.5        |
+| CHAT_GROUP_ID         | Chat group ID.⁽¹⁾                                                      | -          |
+| DATABASE_URL          | Database connection URL to connect to PostgreSQL server.⁽¹⁾            | -          |
+| DELAY_SECONDS         | The delay seconds between forward of message between users and admins. | 1          |
+| GROUP_NAME            | Name of the group the bot represents.                                  | Illuminati |
+| INFORM_ERROR          | Errors will be reported in admins group if `TRUE`.                     | TRUE       |
+| LISTEN                | The URL to listen for webhooks.                                        | -          |
+| LOG_FILE              | The file to log errors.                                                | -          |
+| POLL_INTERVAL         | The interval between subsequent polling.                               | 1          |
+| PORT                  | The port to listen for webhooks.                                       | 0          |
+| REPLY_CHARACTER       | Only messages with this character prepended will be sent to users.     | !          |
+| STEP                  | Number of divisions at which the announcement statistics is updated.   | 10         |
+| TOKEN                 | Token of the bot.⁽¹⁾                                                   | -          |
+| TRACEBACK_VALUE       | The depth of error description.                                        | 5          |
+| URL                   | The base URL for webhooks without trailing `/`.                        | -          |
 
 ## Notes
 
@@ -57,6 +67,6 @@ The file can be formatted using HTML.
 2. The bot has to be a member of admins group and chat group.
 3. If webhook parameters are not available, the bot will use long polling method.
 4. If `INFORM_ERROR` is `TRUE`, there won't be any effect of `LOG_FILE`.
-5. `STEP` indicates on what value an announcement progress is updated. A value of `10` will make the bot update the details when the progress reaches 10%, 20% ... 90% progress.
+5. `STEP` indicates on what value an announcement progress is updated. A value of `10` will make the bot update the details when the progress reaches 10%, 20% … 90% progress.
 
 # Thank You

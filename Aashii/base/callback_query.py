@@ -2,7 +2,7 @@
 
 from telegram import InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
-from Aashii.constants import Button, Message
+from Aashii.constants import Button, Literal, Message
 from Aashii.utils.misc import block_user, get_membership, unblock_user
 from Aashii.utils.wrappers import check_is_blocked_by_user
 
@@ -29,6 +29,7 @@ def block_user_cb(update: Update, context: CallbackContext):
     message = message.reply_html(text)
     database.add_admin_message(0, user_id, msg_id)
     database.add_user_message(1, user_id, message.message_id)
+    context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
 
 
 @check_is_blocked_by_user
@@ -75,3 +76,4 @@ def unblock_user_cb(update: Update, context: CallbackContext):
     message = message.reply_html(text)
     database.add_admin_message(0, user_id, msg_id)
     database.add_user_message(1, user_id, message.message_id)
+    context.bot_data["lastUserId"] = Literal.ADMINS_GROUP_ID
