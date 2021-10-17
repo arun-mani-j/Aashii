@@ -13,7 +13,11 @@ class Server:
 
     def __init__(self, token: str, commands: dict, database_url: str, handlers: dict):
         """Create a new Server."""
-        defaults = Defaults(parse_mode=ParseMode.HTML, allow_sending_without_reply=True)
+        defaults = Defaults(
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+            allow_sending_without_reply=True,
+        )
         self.updater = Updater(
             token=token, defaults=defaults, user_sig_handler=self.signal_handler
         )

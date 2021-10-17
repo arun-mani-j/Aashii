@@ -130,7 +130,7 @@ def send_start(update: Update, context: CallbackContext):
     user = update.message.from_user
     user_id = user.id
     full_name = user.full_name
-    membership = get_membership(user_id, context.bot)
+    membership = get_membership(user_id, context)
     username = f"@{user.username}" if user.username else None
     text = Message.USER_CONNECTED.format(
         FULL_NAME=full_name,
@@ -202,7 +202,7 @@ def whois(update: Update, context: CallbackContext):
             return
 
     username, full_name, blocked = database.get_user(user_id)
-    membership = get_membership(user_id, context.bot)
+    membership = get_membership(user_id, context)
     text = Message.USER.format(
         FULL_NAME=full_name,
         USER_ID=user_id,

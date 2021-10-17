@@ -59,7 +59,11 @@ class Message:
 
     ENTITY_FORWARD_ANONYMOUS = "<b>Forwarded from {SENDER_NAME}</b>\n{FROM}"
 
-    ENTITY_FORWARD_CHAT = "<b>Forwarded from <a href='tg://user?id={FROM_CHAT_ID}'>{FROM_CHAT_NAME}</a></b>\n{FROM}"
+    ENTITY_FORWARD_CHAT = (
+        "<b>Forwarded from <a href='https://t.me/c/{FROM_CHAT_ID}/{MESSAGE_ID}'>"
+        "{FROM_CHAT_NAME}</a></b>\n"
+        "{FROM}"
+    )
 
     ENTITY_FORWARD_USER = "<b>Forwarded from <a href='tg://user?id={FROM_USER_ID}'>{FROM_FULL_NAME}</a></b>\n{FROM}"
 

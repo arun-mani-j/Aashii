@@ -30,10 +30,14 @@ def _get_from_tag(message: TMessage, quote: bool):
             SENDER_NAME=name, FROM=entity_from
         )
     elif message.forward_from_chat:
-        chat_id = message.forward_from_chat.id
+        chat_id = int(str(message.forward_from_chat.id).replace("-100", ""))
         name = message.forward_from_chat.title
+        msg_id = message.forward_from_message_id
         from_tag = Message.ENTITY_FORWARD_CHAT.format(
-            FROM_CHAT_ID=chat_id, FROM_CHAT_NAME=name, FROM=entity_from
+            FROM_CHAT_ID=chat_id,
+            FROM_CHAT_NAME=name,
+            MESSAGE_ID=msg_id,
+            FROM=entity_from,
         )
     elif message.forward_from:
         user_id = message.forward_from.id

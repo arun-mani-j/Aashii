@@ -14,7 +14,7 @@ def block_user_cb(update: Update, context: CallbackContext):
     message = update.callback_query.message
     user_id, _ = database.get_user_message_id_from_users(message.message_id)
     msg_id = block_user(user_id, context)
-    membership = get_membership(user_id, context.bot)
+    membership = get_membership(user_id, context)
     username, full_name, blocked = database.get_user(user_id)
     edit_text = Message.USER_CONNECTED.format(
         FULL_NAME=full_name,
@@ -61,7 +61,7 @@ def unblock_user_cb(update: Update, context: CallbackContext):
     message = update.callback_query.message
     user_id, _ = database.get_user_message_id_from_users(message.message_id)
     msg_id = unblock_user(user_id, context)
-    membership = get_membership(user_id, context.bot)
+    membership = get_membership(user_id, context)
     username, full_name, blocked = database.get_user(user_id)
     edit_text = Message.USER_CONNECTED.format(
         FULL_NAME=full_name,

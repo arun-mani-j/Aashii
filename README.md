@@ -38,7 +38,7 @@ The file can be formatted using HTML.
 3. Install the requirements specified in `requirements.txt`.
 4. Fill the environment variables.
 5. Execute `psql -f data/schema.sql` to initialize tables.
-6. Start the bot using `python3 -m Aashi`.
+6. Start the bot using `python3 -m Aashii`.
 
 # Environment Variables
 
