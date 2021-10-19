@@ -23,7 +23,7 @@ def _dereply_character(update: Update):
 
 def _is_legit_reply(update: Update, context: CallbackContext):
     message = update.effective_message
-    textual = message.caption or message.text or Literal.REPLY_CHARACTER
+    textual = message.caption or message.text or ""
     should_reply = textual.startswith(Literal.REPLY_CHARACTER)
     reply_to_admins = message.reply_to_message.from_user.id != context.bot.id
 

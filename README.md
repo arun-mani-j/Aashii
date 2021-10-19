@@ -20,7 +20,6 @@ Except `/cancel`, `/help` and `/start`, all other commands require it to be a re
 Members just need to start the bot and casually message it. The messages will be sent to admins group.
 Admins reply to messages of users and this gets sent to users. If your message is reply to any admins message, it won't sent to users unless you prefix your message with `REPLY_CHARACTER`, which is by default `!`.
 That is, if you reply to an admins with `!` at start, then that message will be sent to users (of course with `!` removed).
-If there is no text field, like no caption for media or the message is a sticker, then it is forwarded too.
 
 There is `/delete` command to delete any message you sent to users by mistake.
 
