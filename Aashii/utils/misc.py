@@ -30,7 +30,7 @@ def block_user(user_id: int, context: CallbackContext):
             chat_id=user_id, text=Message.BLOCKED_USER_STATUS
         )
     except Unauthorized:
-        pass
+        return 0
     else:
         return msg.message_id
 
@@ -79,7 +79,9 @@ def get_user_src_message(update: Update, context: CallbackContext):
     user_id, src_msg_id = None, None
 
     if not reply:
-        pass
+        user_id, src_msg_id = database.get_user_message_id_from_users(
+            message.message_id
+        )
     elif reply.from_user.id == context.bot.id:
         user_id, src_msg_id = database.get_user_message_id_from_users(reply.message_id)
     else:
@@ -100,6 +102,6 @@ def unblock_user(user_id: int, context: CallbackContext):
             text=Message.UNBLOCKED_USER_STATUS,
         )
     except Unauthorized:
-        pass
+        return 0
     else:
         return msg.message_id
