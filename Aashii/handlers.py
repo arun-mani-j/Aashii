@@ -1,25 +1,15 @@
 """Contains handlers for all interactions to the bot."""
 
-from telegram.ext import (
-    CallbackQueryHandler,
-    CommandHandler,
-    Filters,
-    MessageHandler,
-    TypeHandler,
-)
 from telegram import Update
-from Aashii.base.commands import (
-    announce_users,
-    block_user_cl,
-    cancel_announcement,
-    delete,
-    send_help,
-    send_start,
-    static_command,
-    unblock_user_cl,
-    whois,
-)
-from Aashii.base.callback_query import block_user_cb, connect_admin_cb, unblock_user_cb
+from telegram.ext import (CallbackQueryHandler, CommandHandler, Filters,
+                          MessageHandler, TypeHandler)
+
+from Aashii.base.callback_query import (block_user_cb, connect_admin_cb,
+                                        unblock_user_cb)
+from Aashii.base.commands import (announce_users, block_user_cl,
+                                  cancel_announcement, delete, send_help,
+                                  send_start, static_command, unblock_user_cl,
+                                  whois)
 from Aashii.bridge.admin import edit_admin_message, forward_to_user
 from Aashii.bridge.user import edit_user_message, forward_to_admins
 from Aashii.constants import Literal
@@ -106,7 +96,7 @@ handlers = {
         ),
         (
             {
-                "filters": Filters.chat(Literal.ADMINS_GROUP_ID),
+                "filters": Filters.chat(Literal.ADMINS_GROUP_ID) & Filters.reply,
                 "callback": forward_to_user,
             },
         ),
